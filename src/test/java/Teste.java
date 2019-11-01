@@ -15,17 +15,13 @@ public class Teste {
     private static Controle controle;
 
     @BeforeAll
-    public static void estratificaValores(){
+    public static void zeraNumeroDeTentativasDeLogin(){
         Controle controle = new Controle();
         try {
             if(controle.leArquivoCSV() != null){
                 List<UsuarioCadastrado> usuariosCadastrados = controle.leArquivoCSV();
                 for(UsuarioCadastrado usuario : usuariosCadastrados){
-                    if(usuario.getNumeroDeTentativasDeLogin() > 3){
-                        usuario.setNumeroDeTentativasDeLogin(3);
-                    }else if(usuario.getNumeroDeTentativasDeLogin() < 3){
-                        usuario.setNumeroDeTentativasDeLogin(0);
-                    }
+                    usuario.setNumeroDeTentativasDeLogin(0);
                 }
                 controle.atualizaArquivoCSV();
             }
@@ -36,22 +32,6 @@ public class Teste {
         }
     }
 
-    @Test
-    public void testaLeituraDoArquivo(){
-        controle = new Controle();
-        boolean lidoComSucesso = false;
-        try {
-                if(controle.leArquivoCSV() != null){
-                    lidoComSucesso = true;
-                }
-        } catch (IOException e) {
-            lidoComSucesso = false;
-        } catch (CsvException e) {
-            lidoComSucesso = false;
-        }
-        assumeTrue(lidoComSucesso);
-    }
-
     @ParameterizedTest
     @CsvFileSource(resources = "/UsuariosParaTestes.csv", delimiter = ',')
     public void testaAutenticacao(String usuario, String senha){
@@ -59,5 +39,21 @@ public class Teste {
         controle.verificaLogin(usuario,senha);
         controle.atualizaArquivoCSV();
         assertTrue(true);
+    }
+
+    @Test
+    public void testaLeituraDoArquivo(){
+        controle = new Controle();
+        boolean lidoComSucesso = false;
+        try {
+            if(controle.leArquivoCSV() != null){
+                lidoComSucesso = true;
+            }
+        } catch (IOException e) {
+            lidoComSucesso = false;
+        } catch (CsvException e) {
+            lidoComSucesso = false;
+        }
+        assumeTrue(lidoComSucesso);
     }
 }
