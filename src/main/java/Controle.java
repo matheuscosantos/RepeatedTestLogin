@@ -19,6 +19,7 @@ public class Controle {
     private static final String caminhoCSV = "./src/main/resources/usuarios.csv";
 
     public List<UsuarioCadastrado> leArquivoCSV() throws IOException, CsvException {
+
         usuariosCadastrados = new ArrayList<UsuarioCadastrado>();
 
         try (CSVReader reader = new CSVReader(new FileReader(caminhoCSV))) {
@@ -27,12 +28,12 @@ public class Controle {
                 UsuarioCadastrado usuarioCadastrado = new UsuarioCadastrado(nextLine[0], nextLine[1], Integer.parseInt(nextLine[2]));
                 usuariosCadastrados.add(usuarioCadastrado);
             }
+            reader.close();
             return usuariosCadastrados;
         }catch (FileNotFoundException e){
             return null;
         }
     }
-
 
     public boolean verificaLogin(String nome, String senha){
         for(UsuarioCadastrado usuario : usuariosCadastrados){
@@ -48,8 +49,7 @@ public class Controle {
         return false;
     }
 
-
-    public static void atualizaArquivo()
+    public void atualizaArquivoCSV()
     {
         try {
             Writer writer = Files.newBufferedWriter(Paths.get(caminhoCSV));
