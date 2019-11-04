@@ -1,12 +1,12 @@
 import com.opencsv.exceptions.CsvException;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvFileSource;
-
 import java.io.IOException;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -23,7 +23,7 @@ public class Teste {
                 for(UsuarioCadastrado usuario : usuariosCadastrados){
                     usuario.setNumeroDeTentativasDeLogin(0);
                 }
-                controle.atualizaArquivoCSV();
+                controle.atualizaArquivoCSV(usuariosCadastrados);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -32,13 +32,21 @@ public class Teste {
         }
     }
 
-    @ParameterizedTest
-    @CsvFileSource(resources = "/UsuariosParaTestes.csv", delimiter = ',')
-    public void testaAutenticacao(String usuario, String senha){
+    @RepeatedTest(5)
+    public void testaAutenticacao(RepetitionInfo repetitionInfo) throws IOException, CsvException {
+        String usuario = "joão";
+        String senha = "1234";
         controle = new Controle();
-        controle.verificaLogin(usuario,senha);
-        controle.atualizaArquivoCSV();
-        assertTrue(true);
+
+        if(controle.verificaLogin(usuario,senha).equals("Usuário não localizado!")){
+            assertFalse(true);
+        }else{
+            if(repetitionInfo.getCurrentRepetition() <= 5){
+                assertTrue(controle.verificaLogin(usuario,senha).equals("Usuário logado!"));
+            }else {
+                assertTrue(controle.verificaLogin(usuario,senha).equals("Senha errada!"));
+            }
+        }
     }
 
     @Test
@@ -57,3 +65,4 @@ public class Teste {
         assumeTrue(lidoComSucesso);
     }
 }
+

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Controle {
+
     public static List<UsuarioCadastrado> usuariosCadastrados;
     private static final String caminhoCSV = "./src/main/resources/usuarios.csv";
 
@@ -35,21 +36,29 @@ public class Controle {
         }
     }
 
-    public boolean verificaLogin(String nome, String senha){
+    public String verificaLogin(String nome, String senha){
+        Controle controle = new Controle();
         for(UsuarioCadastrado usuario : usuariosCadastrados){
             if(nome.equals(usuario.getNome()) && senha.equals(usuario.getSenha())){
                 usuario.setNumeroDeTentativasDeLogin(0);
-                return true;
+                return "Usuário logado!";
             }
             else if(nome.equals(usuario.getNome())){
-                usuario.setNumeroDeTentativasDeLogin(usuario.getNumeroDeTentativasDeLogin()+1);
-                return false;
+                if(usuario.getNumeroDeTentativasDeLogin() < 3){
+                    usuario.setNumeroDeTentativasDeLogin(usuario.getNumeroDeTentativasDeLogin()+1);
+                    controle.atualizaArquivoCSV(usuariosCadastrados);
+                    return "Senha errada!";
+                }else{
+                    return "Usuário bloqueado";
+                }
+            }else{
+                return "Usuário não localizado!";
             }
         }
-        return false;
+        return "Erro no looping!";
     }
 
-    public void atualizaArquivoCSV()
+    public void atualizaArquivoCSV(List<UsuarioCadastrado> usuariosCadastrados)
     {
         try {
             Writer writer = Files.newBufferedWriter(Paths.get(caminhoCSV));
