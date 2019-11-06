@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -34,12 +33,12 @@ public class Teste {
 
     @RepeatedTest(5)
     public void testaAutenticacao(RepetitionInfo repetitionInfo) throws IOException, CsvException {
-        String usuario = "joão";
-        String senha = "1234";
+        String usuario = "matheuss";
+        String senha = "12345";
         controle = new Controle();
 
         if(controle.verificaLogin(usuario,senha).equals("Usuário não localizado!")){
-            assertFalse(true);
+            assertTrue(true);
         }else{
             if(repetitionInfo.getCurrentRepetition() <= 5){
                 assertTrue(controle.verificaLogin(usuario,senha).equals("Usuário logado!"));
